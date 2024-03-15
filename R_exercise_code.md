@@ -1,6 +1,6 @@
 https://www.coursera.org/learn/crash-course-in-causality/home/week/3
 
-Coursera home work input file is incorrect use this file instead https://github.com/robjellis/lalonde/blob/master/lalonde_data.cs
+Coursera home work input file is incorrect use this file instead https://github.com/robjellis/lalonde/blob/master/lalonde_data.csv
 And use their R lab environment to complete the exercise, click checkbox in package for corresponding package you need for assignment, and it will load directly into the R lab environment.
 
 ```r

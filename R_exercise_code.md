@@ -30,7 +30,7 @@ And use their R lab environment to complete the exercise, click checkbox in pack
 > raw_mean_difference <- mean_treated - mean_untreated
 > 
 > raw_mean_difference
-[1] -635.0262
+
 > propensity_model <- glm(treat ~ age + educ + black + hispan + married + nodegree + re74 + re75, 
 +                         data = data, family = binomial())
 > 

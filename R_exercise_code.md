@@ -239,7 +239,7 @@ Absolute Weighted Standardized Difference for 'nodegree':
 > 
 > # Display the estimate of the average causal effect and its confidence interval
 > cat("Estimate of Average Causal Effect (ACE) on re78:", estimate, "\n")
-Estimate of Average Causal Effect (ACE) on re78: 224.6763 
+Estimate of Average Causal Effect (ACE) on re78: 
 > cat("95% Confidence Interval for ACE on re78:", ci, "\n")
 95% Confidence Interval for ACE on re78: 
 > 

@@ -172,6 +172,115 @@ In comparing standardized differences (SMDs) across variables to identify which 
 > 
 > # Print the 95% confidence interval
 > cat("95% Confidence Interval for the mean difference in earnings:", ci_95, "\n")
+
+> getwd()
+[1] "/home/rstudio"
+> data <- read.csv(file="/home/rstudio/lalonde_data_final.csv", header=TRUE, sep=",")
+> new_column_names <- c("ID","treat","age", "educ", "black", "hispan", "married", "nodegree", "re74", "re75", "re78")
+> colnames(data) <- new_column_names
+> propensity_model <- glm(treat ~ age + educ + black + hispan + married + nodegree + re74 + re75, 
++                         data = data, family = binomial(link = "logit"))
+> 
+> # Obtain the propensity score for each subject
+> data$propensity_score <- predict(propensity_model, type = "response")
+> data$iptw <- ifelse(data$treat == 1, 
++                     1 / data$propensity_score, 
++                     1 / (1 - data$propensity_score))
+> 
+> # Find the minimum IPTW
+> min_iptw <- min(data$iptw)
+> 
+> # Find the maximum IPTW
+> max_iptw <- max(data$iptw)
+> 
+> # Print the minimum and maximum IPTW
+> cat("Minimum IPTW:", min_iptw, "\n")
+Minimum IPTW: 
+> cat("Maximum IPTW:", max_iptw, "\n")
+Maximum IPTW: 
+> 
+
+> # Calculate weighted means for 'nodegree'
+> weighted_mean_nodegree_treat <- with(data[data$treat == 1,], sum(nodegree * iptw) / sum(iptw))
+> weighted_mean_nodegree_control <- with(data[data$treat == 0,], sum(nodegree * iptw) / sum(iptw))
+> 
+> # Calculate weighted variances for 'nodegree'
+> weighted_var_nodegree_treat <- with(data[data$treat == 1,], sum(iptw * (nodegree - weighted_mean_nodegree_treat)^2) / sum(iptw))
+> weighted_var_nodegree_control <- with(data[data$treat == 0,], sum(iptw * (nodegree - weighted_mean_nodegree_control)^2) / sum(iptw))
+> 
+> # Calculate effective sample sizes
+> eff_n_treat <- sum(data[data$treat == 1,]$iptw)^2 / sum((data[data$treat == 1,]$iptw)^2 / length(data[data$treat == 1,]$iptw))
+> eff_n_control <- sum(data[data$treat == 0,]$iptw)^2 / sum((data[data$treat == 0,]$iptw)^2 / length(data[data$treat == 0,]$iptw))
+> 
+> # Calculate pooled weighted standard deviation
+> pooled_weighted_sd_nodegree <- sqrt(((eff_n_treat - 1) * weighted_var_nodegree_treat + (eff_n_control - 1) * weighted_var_nodegree_control) / (eff_n_treat + eff_n_control - 2))
+> 
+> # Calculate standardized difference
+> std_diff_nodegree_weighted <- (weighted_mean_nodegree_treat - weighted_mean_nodegree_control) / pooled_weighted_sd_nodegree
+> 
+> # Print the standardized difference for 'nodegree' and use the abosolute value
+> cat("Weighted Standardized Difference for 'nodegree':", std_diff_nodegree_weighted, "\n")
+Weighted Standardized Difference for 'nodegree': 
+> abs_std_diff_nodegree_weighted <- abs(std_diff_nodegree_weighted)
+> 
+> # Print the absolute value of the standardized difference for 'nodegree'
+> cat("Absolute Weighted Standardized Difference for 'nodegree':", abs_std_diff_nodegree_weighted, "\n")
+Absolute Weighted Standardized Difference for 'nodegree': 
+
+> design_iptw <- svydesign(ids = ~1, data = data, weights = ~iptw)
+> # Estimate the effect of treatment on the outcome variable re78 using svyglm
+> model_ace <- svyglm(re78 ~ treat, design = design_iptw)
+> 
+> # Extract the coefficient for the treatment variable
+> estimate <- coef(model_ace)["treat"]
+> 
+> # Extract the 95% confidence interval for the treatment effect
+> ci <- confint(model_ace, level = 0.95)["treat", ]
+> 
+> # Display the estimate of the average causal effect and its confidence interval
+> cat("Estimate of Average Causal Effect (ACE) on re78:", estimate, "\n")
+Estimate of Average Causal Effect (ACE) on re78: 224.6763 
+> cat("95% Confidence Interval for ACE on re78:", ci, "\n")
+95% Confidence Interval for ACE on re78: 
+> 
+> # Estimate from svyglm for the treatment effect
+> estimate <- coef(model_ace)["treat"]
+> 
+> # Standard error for the treatment effect estimate
+> std_error <- sqrt(vcov(model_ace)["treat", "treat"])
+
+> # Lower and upper bounds of the 95% CI, the above result doesn't match answer 100%, so switch the critical value to 1.96 as z statistic distribution and calculate it manually, then the answer matches. calculate the confidence interval using Zα/2=1.96Zα/2=1.96 for a 95
+> lower_bound <- estimate - 1.96 * std_error
+> upper_bound <- estimate + 1.96 * std_error
+> 
+> # Display the manually calculated confidence interval
+> cat("Manually Calculated 95% CI for ACE on re78: [", lower_bound, ",", upper_bound, "]\n")
+Manually Calculated 95% CI for ACE on re78: 
+
+> # check the coursera lab package for ipw, and then use the inbulit trunc function. Estimate propensity scores and create IPTW with truncation
+> weight_model <- ipwpoint(exposure = treat, family = "binomial", link = "logit",
++                          denominator = ~ age + educ + black + hispan + married + nodegree + re74 + re75,
++                          data = data, trunc = 0.01)
+> 
+> # Extract the truncated weights
+> data$iptw_truncated <- weight_model$weights
+> 
+> # Create a survey design object with the truncated IPTW
+> design_iptw_truncated <- svydesign(ids = ~1, data = data, weights = ~iptw_truncated)
+> 
+> # Fit a survey generalized linear model to estimate the ACE using truncated weights
+> model_ace_truncated <- svyglm(re78 ~ treat, design = design_iptw_truncated)
+> 
+> # Extract the coefficient (ACE estimate) and calculate its 95% confidence interval
+> estimate_truncated <- coef(model_ace_truncated)["treat"]
+> ci_truncated <- confint(model_ace_truncated, level = 0.95)["treat", ]
+> 
+> # Output the ACE estimate and its confidence interval
+> cat("ACE Estimate with Truncated Weights:", estimate_truncated, "\n")
+ACE Estimate with Truncated Weights: 
+> cat("95% CI for ACE with Truncated Weights:", ci_truncated, "\n")
+95% CI for ACE with Truncated Weights: 
+
 '''
 
 

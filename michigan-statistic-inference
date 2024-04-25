@@ -1,0 +1,19 @@
+week 1:
+
+
+Week 2
+Estimate population proportion with confidence
+  Best estimate +/- Margin of Error
+  Margin of Error = a few * estimated Standard Error
+  a few depends on the signifiance level, e.g.Z* use 1.645 for 90% CI, 1.96 for 95% CI, 2.236 for 98% CI, 2.576 for 99% CI
+Understanding confidence intervals
+  We use our sample proportion to construct this interval but we do not have the full population, and not to refer to this interval as being as confidence interval for a sample proportion. It's a range of values to help us estimate what we think that population rate might be with a high level of confidence. 
+  We still don't know the full population's true value. That's why we design experiment and gather representative data to estimate its value. 
+  
+Visual Theory
+
+Brown university build visual tool to help see the theory
+https://seeing-theory.brown.edu/
+https://seeing-theory.brown.edu/frequentist-inference/index.html#section2
+
+chapters -> Frequentist Inference ->  Interval Estimation

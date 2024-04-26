@@ -17,3 +17,16 @@ https://seeing-theory.brown.edu/
 https://seeing-theory.brown.edu/frequentist-inference/index.html#section2
 
 chapters -> Frequentist Inference ->  Interval Estimation
+
+
+
+Professor reply:
+################################################################################################################################################################################################
+We use the z-test with proportions and the t-test with means in this course.
+
+Some statisticians will use the z-test with means under certain conditions but this course does not cover those instances.
+
+The below video from jbstatistics.com is a good discussion of why we should not use the z-test with means.  (All of the content on jbstatistics.com is excellent and highly recommended.)
+
+https://www.jbstatistics.com/hypothesis-tests-on-one-mean-t-or-z/
+#################################################################################################################################################################################################

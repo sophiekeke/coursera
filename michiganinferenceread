@@ -1,0 +1,26 @@
+# Hypothesis Testing: Other Considerations
+
+Statistical hypothesis testing reflects the scientific method, adapted to the setting of research involving data analysis. In this framework, a researcher makes a precise statement about the population of interest, then aims to falsify the statement. In statistical hypothesis testing, the statement in question is the null hypothesis. If we reject the null hypothesis, we have falsified it (to some degree of confidence). According to the scientific method, falsifying a hypothesis should require an overwhelming amount of evidence against it. If the data we observe are ambiguous, or are only weakly contradictory to the null hypothesis, we do not reject the null hypothesis.
+
+The framework of formal hypothesis testing defines two distinct types of errors:
+- **Type I error (false positive):** Occurs when the null hypothesis is true but is incorrectly rejected.
+- **Type II error:** Occurs when the null hypothesis is not rejected when it actually is false.
+
+Most traditional methods for statistical inference aim to strictly control the probability of a type I error, usually at 5%. While we also wish to minimize the probability of a type II error, this is a secondary priority to controlling the type I error.
+
+All the standard statistical testing procedures perform well at controlling type I error under ideal conditions, but most of them can break down and give misleading results in practice. That is, if we claim to be conducting a test that has a 5% false positive rate, is this the actual false positive rate? As we discussed earlier in the setting of confidence intervals, several complications that can arise in practice will result in a statistical procedure not performing as intended. In order to reduce the risk of this happening, statisticians use statistical theory and computer simulations to assess the operating characteristics of testing procedures in various challenging settings.
+
+## Normality of the Data
+
+One of the commonly-stated “assumptions” that is often raised as a caveat when presenting statistical findings is the issue of the data being normally distributed. While it is true that in some circumstances, strongly non-normal data can cause statistical tests to be misleading, in most settings, the data are not required to follow a normal distribution. In addition, there are other issues unrelated to normality that are potentially more likely to produce misleading results.
+
+Concerns about normality primarily center on the calibration of rejection regions for a test statistic, or equivalently, the manner in which p-values are computed. As with confidence intervals, the Z-score plays the central role. To be concrete, suppose we are conducting a test comparing two population means using independent samples (a “two sample t-test”). The corresponding sample means are x1_bar and x2_bar, and the test is based on the difference between them, which is x1_bar - x2_bar. This difference has a standard error, which we denote here by s (there are a few different ways to compute this standard error, s can refer to any of them here). The Z-score is (x1_bar - x2_bar) / s.
+
+Under the very strong assumption that the data are normally distributed, the Z-score follows a Student t-distribution, with degrees of freedom depending on the way that the standard error was constructed (in most cases the degrees of freedom will be between m-2 and m, where m is the combined sample size of the two samples being compared). If the data are not normally distributed, we can appeal to the central limit theorem (CLT), which states that the Z-score will be approximately normally distributed as long as the sample size is not too small.
+
+As discussed earlier in the setting of confidence intervals, there is no universal rule that states when the sample size is large enough to justify invoking the CLT. Rules of thumb between 20 and 50 are often stated. A smaller sample size is sufficient to invoke the CLT when the data approximately follow a normal distribution, and a larger sample size is needed if the data are strongly non-Gaussian.
+
+While normality is a consideration in some settings, it is mainly relevant when the sample size is small and the data are strongly non-Gaussian. Other issues can cause statistical tests to break down in a broader range of settings, so normality of the data should be seen as one of several factors that can impact the performance of a statistical test, and is often a relatively minor one at that.
+
+A useful approach in practice is to use the Student t-distribution to calculate rejection regions and p-values, even when the data are not expected to follow a normal distribution. Doing so is slightly conservative, in that the rejection region based on the t-distribution will be slightly smaller than the rejection region based on the normal distribution, and p-values based on the t-distribution will be slightly larger than p-values based on the normal distribution. As the sample size grows beyond around 50, there is little practical difference between using the t-distribution and the normal distribution when carrying out statistical hypothesis tests
+
